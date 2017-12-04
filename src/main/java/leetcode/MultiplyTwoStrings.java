@@ -12,15 +12,16 @@ public class MultiplyTwoStrings {
                 int numij = num1i * num2j;
                 int lo = numij % 10;
                 int hi = (numij - lo) / 10;
-                // System.out.format("i=%d,j=%d,numij=%d,lo=%d,hi=%d\n", i, j, numij, lo, hi);
-                int newlo = res[i+j] + lo;
-                res[i+j] = newlo % 10;
-                res[i+j+1] += (newlo - res[i+j]) / 10;
-
-                int newhi = res[i+j+1] + hi;
-                res[i+j+1] = newhi % 10;
-                if (i+j+2 < len1 + len2) res[i+j+2] += (newhi - res[i+j+1]) / 10;
+                res[i+j] += lo;
+                res[i+j+1] += hi;
             }
+        }
+
+        for (i = 1; i < res.length; i++) {
+            int lo = res[i - 1];
+            int newlo = lo % 10;
+            res[i - 1] = newlo;
+            res[i] += (lo - newlo) / 10;
         }
 
         for ( i = res.length - 1; i >= 0 && res[i] == 0;i--);
@@ -31,6 +32,6 @@ public class MultiplyTwoStrings {
     }
 
     public static void main(String[] args) {
-        System.out.println(solution("1234", "123"));
+        System.out.println(solution("1234", "321"));
     }
 }
