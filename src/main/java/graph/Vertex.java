@@ -31,4 +31,8 @@ public class Vertex<T extends Comparable<T>> implements Comparable<Vertex<T>>{
     public String toString() {
         return this.value.toString();
     }
+
+    public T getValue() {
+        return this.value;
+    }
 }
