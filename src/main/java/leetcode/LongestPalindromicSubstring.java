@@ -2,32 +2,33 @@ package leetcode;
 
 public class LongestPalindromicSubstring {
 
+    /*
+     * Define dp to be a state indicating whether substring [i, j] is a palindrome
+     * Then we have:
+     * dp(i, j) = 1 if i = j
+     *          = 1 if i + 1 = j and s[i] = s[j]
+     *          = 1 if dp(i+1, j-1) = 1 and s[i] = s[j]
+     *          = 0 otherwise
+     */
     static String solution(String s) {
-        int[][] dp = new int[s.length()][s.length()];
-        int maxLen = 0;
-        int sIdx = 0;
-
-        for (int i = s.length() - 1; i >= 0; i--) {
-            for (int j = i; j < s.length(); j++) {
-                boolean ijEq = s.charAt(i) == s.charAt(j);
-                dp[i][j] = 
-                        (i == j || // i == j dp[i][i] = 1
-                        (i + 1 == j && ijEq) || // i + 1 == j dp[i][i+1] = (s[i]==s[j])
-                        (dp[i+1][j-1] == 1 && ijEq)) ? 1 : 0;
-
-                if (dp[i][j] == 1) {
-                    int newLen = j - i + 1;
-                    boolean isBetter = newLen > maxLen;
-                    maxLen = isBetter ? newLen : maxLen;
-                    sIdx = isBetter ? i : sIdx;
+        final int len = s.length();
+        int sIdx = 0, maxLen = 0;
+        final boolean[] dp = new boolean[len];
+        for (int i = len - 1; i >= 0; i--) {
+            for (int j = len - 1; j >= i; j--) {
+                if (i == j) dp[j] = true;
+                else if (i + 1 == j) dp[j] = s.charAt(i) == s.charAt(j);
+                else dp[j] = s.charAt(i) == s.charAt(j) && dp[j-1];
+                if (dp[j] && (j - i + 1) > maxLen) {
+                    maxLen = (j - i + 1);
+                    sIdx = i;
                 }
             }
         }
-
         return s.substring(sIdx, sIdx + maxLen);
     }
 
     public static void main(String[] args) {
-        System.out.println(solution("ababc"));
+        System.out.println(solution("ababa"));
     }
 }
