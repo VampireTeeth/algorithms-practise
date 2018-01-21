@@ -1,5 +1,7 @@
 package leetcode;
 
+import java.util.Arrays;
+
 public class KnightProbability {
     /*
       Leetcode 688
@@ -17,6 +19,7 @@ public class KnightProbability {
       From each of those positions, there are also two moves that will keep the knight on the board.
       The total probability the knight stays on the board is 0.0625.
      */
+    /*
     public double solution(int N, int K, int r, int c) {
         if (K == 0) return 1.0;
         if (N < 3) return 0.0;
@@ -60,9 +63,55 @@ public class KnightProbability {
         dp[K-1][r][c] = res;
         return res;
     }
+    */
+    
+    
+    /*
+     * Define dp[k][i][j] to be the number of ways to stay in the chessboard starting from i,j after k steps
+     * Then: dp[k][i][j] = sum(dp[k-1][x][y]) for all (x,y) that can go to (i,j)
+     * 
+     * Answer = sum(dp[K][i][j]) / (8**K)
+     */
+    public double solution(int N, int K, int r, int c) {
+        double[][] dp0 = new double[N][N];
+        dp0[r][c] = 1.0;
+        final int[] moves1 = {-2, 2}, moves2 = {-1, 1};
+        for (int k = 1; k < K + 1; k++) {
+            double[][] dp1 = new double[N][N];
+            // For each cell, populating the dp1 matrix
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    // For each i,j, calculate the number of different ways of going to each valid x,y
+                    // Time complexity for calculating dp[x][y] going from i,j is constant O(1)
+                    for (int m1 : moves1)
+                        for (int m2 : moves2) {
+                            int x = i + m1;
+                            int y = j + m2;
+                            if (x >= 0 && x < N && y >= 0 && y < N) {
+                                dp1[x][y] += dp0[i][j];
+                            }
+                            x = i + m2;
+                            y = j + m1;
+                            if (x >= 0 && x < N && y >= 0 && y < N) {
+                                dp1[x][y] += dp0[i][j];
+                            }
+                        }
+                }
+            }
+            dp0 = dp1;
+        }
+        //System.out.println(Arrays.deepToString(dp0));
+        double ans = 0.0;
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++) {
+                ans += dp0[i][j];
+            }
+        return ans / Math.pow(8, K);
+    }
 
     public static void main(String[] args) {
         KnightProbability knightProbability = new KnightProbability();
-        System.out.println(knightProbability.solution(8, 30, 6, 4));
+        int N = 8, K = 30, r = 6, c = 4;
+        System.out.println(knightProbability.solution(N, K, r, c));
     }
 }
